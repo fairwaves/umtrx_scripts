@@ -94,8 +94,6 @@ class uhd_fft(grc_wxgui.top_block_gui):
 		self.nb0.AddPage(grc_wxgui.Panel(self.nb0), "Waterfall")
 		self.nb0.AddPage(grc_wxgui.Panel(self.nb0), "Scope")
 		self.GridAdd(self.nb0, 0, 0, 1, 8)
-		self._lms_panel = lms_ctrl_panel.lms_ctrl_panel(parent=self.GetWin(), lms_iface=self.umtrx_lms_dev)
-		self.GridAdd(self._lms_panel, 3, 0, 1, 8)
 		_freq_sizer = wx.BoxSizer(wx.VERTICAL)
 		self._freq_text_box = forms.text_box(
 			parent=self.GetWin(),
@@ -178,6 +176,10 @@ class uhd_fft(grc_wxgui.top_block_gui):
 			size=((-1, 400)),
 		)
 		self.nb0.GetPage(0).Add(self.fft.win)
+		# Finally add the LMS control panel.
+		# This should be done at the very end, because it should read LMS configuration values after UHD set it.
+		self._lms_panel = lms_ctrl_panel.lms_ctrl_panel(parent=self.GetWin(), lms_iface=self.umtrx_lms_dev)
+		self.GridAdd(self._lms_panel, 3, 0, 1, 8)
 
 		##################################################
 		# Connections
@@ -243,13 +245,12 @@ class uhd_fft(grc_wxgui.top_block_gui):
 		return self.samp_rate
 
 	def set_samp_rate(self, samp_rate):
-		self.samp_rate = samp_rate
+		self.uhd_usrp_source_0.set_samp_rate(samp_rate)
+		self.samp_rate = self.uhd_usrp_source_0.get_samp_rate()
 		self.wxgui_scopesink2_0.set_sample_rate(self.samp_rate)
 		self.fft.set_sample_rate(self.samp_rate)
 		self._samp_rate_text_box.set_value(self.samp_rate)
 		self.wxgui_waterfallsink2_0.set_sample_rate(self.samp_rate)
-		self.uhd_usrp_source_0.set_samp_rate(self.samp_rate)
-		self.uhd_usrp_source_0.set_bandwidth(self.samp_rate, 0)
 
 	def get_gain(self):
 		return self.gain

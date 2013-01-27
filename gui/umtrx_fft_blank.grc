@@ -944,7 +944,7 @@
     </param>
     <param>
       <key>bw0</key>
-      <value>samp_rate</value>
+      <value>param_samp_rate</value>
     </param>
     <param>
       <key>center_freq1</key>
