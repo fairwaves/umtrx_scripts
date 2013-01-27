@@ -21,6 +21,10 @@ from grc_gnuradio import wxgui as grc_wxgui
 from optparse import OptionParser
 import numpy
 import wx
+
+import sys
+sys.path.append('../python_lib')
+
 import umtrx_ctrl
 import umtrx_lms
 import lms_ctrl_panel
