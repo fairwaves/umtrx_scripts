@@ -128,7 +128,7 @@ class demo_app_flow_graph (stdgui2.std_top_block):
 
 
 def main ():
-    app = stdgui2.stdapp(demo_app_flow_graph, "wxgui form demo", nstatus=1)
+    app = stdgui2.stdapp(demo_app_flow_graph, "UmTRX control GUI", nstatus=1)
     app.MainLoop ()
 
 if __name__ == '__main__':
