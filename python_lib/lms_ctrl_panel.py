@@ -148,7 +148,7 @@ def main ():
     app.MainLoop ()
 
 if __name__ == '__main__':
-    lms_num = 2
+    lms_num = 1
     umtrx_lms_dev = umtrx_ctrl.create_umtrx_lms_device(lms_num)
     if umtrx_lms_dev is None:
         # No UmTRX found
