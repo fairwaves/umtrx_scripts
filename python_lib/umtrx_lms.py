@@ -44,6 +44,31 @@ FREQ_LIST = [# min, max, val
     (2.695e9,    3.24e9,     0x34),
     (3.24e9,     3.72e9,     0x3c)]
 
+# LPF code to bandwidth in MHz
+LPF_CODE_TO_BW = {
+0x0 : 14,
+0x1 : 10,
+0x2 : 7,
+0x3 : 6,
+0x4 : 5,
+0x5 : 4.375,
+0x6 : 3.5,
+0x7 : 3,
+0x8 : 2.75,
+0x9 : 2.5,
+0xa : 1.92,
+0xb : 1.5,
+0xc : 1.375,
+0xd : 1.25,
+0xe : 0.875,
+0xf : 0.75,
+}
+
+# LPF bandwidth in MHz to LPF code
+# Just reverse LPF_CODE_TO_BW for simplicity
+LPF_BW_TO_CODE = {v:k for k, v in LPF_CODE_TO_BW.iteritems()}
+
+
 # A list of reserved registers which read as junk
 RESV_REGS = (0x0C, 0x0D, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x69, 0x6A, 0x6B, 0x6C, 0x6D)
 
@@ -282,6 +307,60 @@ def lms_get_rx_vga2gain(lms_dev):
     gain = lms_dev.reg_get_bits(0x65, 0x1f, 0)
     gain = gain if gain <= 20 else 20
     return gain * 3
+
+def lms_set_tx_lpf_raw(lms_dev, val):
+    """ Set Tx LPF bandwidth raw value.
+    val is in [0 .. 15] range
+    Returns the old gain value on success, None on error"""
+    if not (0 <= val <= 15): return None
+    old_bits = lms_dev.reg_write_bits(0x34, (0x0f << 2), (int(val) << 2))
+    return (old_bits >> 2) & 0x0f
+
+def lms_set_tx_lpf(lms_dev, val):
+    """ Set Tx LPF bandwidth in MHz.
+    val is in [0 .. 14] MHz range
+    Returns the old gain value on success, None on error"""
+    return lms_set_rx_lpf_raw(lms_dev, LPF_BW_TO_CODE[val])
+
+def lms_get_tx_lpf_raw(lms_dev):
+    """ Get Tx LPF bandwidth raw value.
+    return value is in [0 .. 15] range
+    Returns the gain value on success, None on error"""
+    value = lms_dev.reg_get_bits(0x34, (0x0f << 2), 2)
+    return value
+
+def lms_get_tx_lpf(lms_dev):
+    """ Get Tx LPF bandwidth in MHz.
+    return value is in [0.75 .. 14] MHz range
+    Returns the gain value on success, None on error"""
+    return LPF_CODE_TO_BW[lms_get_rx_lpf_raw(lms_dev)]
+
+def lms_set_rx_lpf_raw(lms_dev, val):
+    """ Set Rx LPF bandwidth raw value.
+    val is in [0 .. 15] range
+    Returns the old gain value on success, None on error"""
+    if not (0 <= val <= 15): return None
+    old_bits = lms_dev.reg_write_bits(0x54, (0x0f << 2), (int(val) << 2))
+    return (old_bits >> 2) & 0x0f
+
+def lms_set_rx_lpf(lms_dev, val):
+    """ Set Rx LPF bandwidth in MHz.
+    val is in [0 .. 14] MHz range
+    Returns the old gain value on success, None on error"""
+    return lms_set_rx_lpf_raw(lms_dev, LPF_BW_TO_CODE[val])
+
+def lms_get_rx_lpf_raw(lms_dev):
+    """ Get Rx Rx LPF bandwidth raw value.
+    return value is in [0 .. 15] range
+    Returns the gain value on success, None on error"""
+    value = lms_dev.reg_get_bits(0x54, (0x0f << 2), 2)
+    return value
+
+def lms_get_rx_lpf(lms_dev):
+    """ Get Rx Rx LPF bandwidth in MHz.
+    return value is in [0.75 .. 14] MHz range
+    Returns the gain value on success, None on error"""
+    return LPF_CODE_TO_BW[lms_get_rx_lpf_raw(lms_dev)]
 
 def lms_set_vga1dc_i_int(lms_dev, dc_shift_int):
     """ Set VGA1 DC offset, I channel
