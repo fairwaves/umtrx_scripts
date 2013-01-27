@@ -43,6 +43,18 @@ class lms_ctrl_panel(grc_wxgui.panel.Panel):
             )
         self.GridAdd(self.rx_lna_gain_mode_chooser, 0, 1, 1, 1)
 
+        # Rx LPF bandwidth
+        self.rx_lna_gain_mode_chooser = forms.drop_down(
+            parent=self.GetWin(),
+            value=umtrx_lms.lms_get_rx_lpf_raw(self.lms),
+            callback=self.set_rx_lpf,
+            label="Rx LNA LPF",
+            choices=[15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+            labels=[0.75, 0.875, 1.25, 1.375, 1.5, 1.92, 2.5, 2.75, 3, 3.5, 4.375, 5, 6, 7, 10, 14],
+#            style=wx.RA_HORIZONTAL,
+            )
+        self.GridAdd(self.rx_lna_gain_mode_chooser, 0, 2, 1, 1)
+        
         # Rx VGA1 gain
         self.rx_vga1gain = umtrx_lms.lms_get_rx_vga1gain_int(self.lms)
         hbox = wx.BoxSizer(wx.HORIZONTAL)
@@ -74,6 +86,10 @@ class lms_ctrl_panel(grc_wxgui.panel.Panel):
     def set_rx_lna_gain_mode(self, value):
         print "set_rx_lna_gain_mode(%d)" % (value)
         umtrx_lms.lms_set_rx_lna_gain(self.lms, value)
+        
+    def set_rx_lpf(self, value):
+        print "set_rx_lpf(%d)" % (value)
+        umtrx_lms.lms_set_rx_lpf_raw(self.lms, value)
         
     def set_rx_vga1gain(self, value):
         # Don't set value twice
