@@ -4,7 +4,7 @@
 # Title: UmTRX FFT
 # Author: Fairwaves LLC
 # Description: UmTRX FFT Waveform Plotter
-# Generated: Sun Jan 27 20:16:37 2013
+# Generated: Mon Jan 28 11:33:49 2013
 ##################################################
 
 from gnuradio import eng_notation
@@ -49,9 +49,9 @@ def create_umtrx_lms(lms_num):
         return umtrx_lms_dev
 
 
-class uhd_fft(grc_wxgui.top_block_gui):
+class umtrx_fft_blank(grc_wxgui.top_block_gui):
 
-	def __init__(self, param_freq=935e6, param_gain=15, param_samp_rate=1e6, address="", param_antenna="RX1", param_bcast_addr="192.168.10.255", param_channel_num=0):
+	def __init__(self, param_freq=935e6, param_gain=15, param_samp_rate=1e6, address="", param_antenna="RX1", param_channel_num=0, param_bcast_addr="192.168.10.255", param_fft_size=1024, param_refresh_rate=30):
 		grc_wxgui.top_block_gui.__init__(self, title="UmTRX FFT")
 
 		##################################################
@@ -62,15 +62,16 @@ class uhd_fft(grc_wxgui.top_block_gui):
 		self.param_samp_rate = param_samp_rate
 		self.address = address
 		self.param_antenna = param_antenna
-		self.param_bcast_addr = param_bcast_addr
 		self.param_channel_num = param_channel_num
+		self.param_bcast_addr = param_bcast_addr
+		self.param_fft_size = param_fft_size
+		self.param_refresh_rate = param_refresh_rate
 
 		##################################################
 		# Variables
 		##################################################
 		self.subdev = subdev = "A:0" if param_channel_num == 0 else "B:0"
 		self.samp_rate = samp_rate = param_samp_rate
-		self.gain = gain = param_gain
 		self.freq = freq = param_freq
 
 		##################################################
@@ -88,7 +89,7 @@ class uhd_fft(grc_wxgui.top_block_gui):
 			label="Sample Rate",
 			converter=forms.float_converter(),
 		)
-		self.GridAdd(self._samp_rate_text_box, 1, 0, 1, 3)
+		self.GridAdd(self._samp_rate_text_box, 1, 0, 1, 1)
 		self.nb0 = self.nb0 = wx.Notebook(self.GetWin(), style=wx.NB_TOP)
 		self.nb0.AddPage(grc_wxgui.Panel(self.nb0), "FFT")
 		self.nb0.AddPage(grc_wxgui.Panel(self.nb0), "Waterfall")
@@ -116,7 +117,7 @@ class uhd_fft(grc_wxgui.top_block_gui):
 			cast=float,
 			proportion=1,
 		)
-		self.GridAdd(_freq_sizer, 1, 3, 1, 5)
+		self.GridAdd(_freq_sizer, 1, 1, 1, 7)
 		self.wxgui_waterfallsink2_0 = waterfallsink2.waterfall_sink_c(
 			self.nb0.GetPage(1).GetWin(),
 			baseband_freq=0,
@@ -124,8 +125,8 @@ class uhd_fft(grc_wxgui.top_block_gui):
 			ref_level=0,
 			ref_scale=2.0,
 			sample_rate=samp_rate,
-			fft_size=512,
-			fft_rate=15,
+			fft_size=param_fft_size,
+			fft_rate=param_refresh_rate,
 			average=False,
 			avg_alpha=None,
 			title="Waterfall Plot",
@@ -156,9 +157,9 @@ class uhd_fft(grc_wxgui.top_block_gui):
 		self.uhd_usrp_source_0.set_subdev_spec(subdev, 0)
 		self.uhd_usrp_source_0.set_samp_rate(samp_rate)
 		self.uhd_usrp_source_0.set_center_freq(freq, 0)
-		self.uhd_usrp_source_0.set_gain(gain, 0)
+		self.uhd_usrp_source_0.set_gain(param_gain, 0)
 		self.uhd_usrp_source_0.set_antenna("RX1", 0)
-		self.uhd_usrp_source_0.set_bandwidth(samp_rate, 0)
+		self.uhd_usrp_source_0.set_bandwidth(param_samp_rate, 0)
 		self.fft = fftsink2.fft_sink_c(
 			self.nb0.GetPage(0).GetWin(),
 			baseband_freq=freq,
@@ -167,8 +168,8 @@ class uhd_fft(grc_wxgui.top_block_gui):
 			ref_level=0,
 			ref_scale=2.0,
 			sample_rate=samp_rate,
-			fft_size=1024,
-			fft_rate=15,
+			fft_size=param_fft_size,
+			fft_rate=param_refresh_rate,
 			average=False,
 			avg_alpha=None,
 			title="FFT Plot",
@@ -201,7 +202,7 @@ class uhd_fft(grc_wxgui.top_block_gui):
 
 	def set_param_gain(self, param_gain):
 		self.param_gain = param_gain
-		self.set_gain(self.param_gain)
+		self.uhd_usrp_source_0.set_gain(self.param_gain, 0)
 
 	def get_param_samp_rate(self):
 		return self.param_samp_rate
@@ -209,6 +210,7 @@ class uhd_fft(grc_wxgui.top_block_gui):
 	def set_param_samp_rate(self, param_samp_rate):
 		self.param_samp_rate = param_samp_rate
 		self.set_samp_rate(self.param_samp_rate)
+		self.uhd_usrp_source_0.set_bandwidth(self.param_samp_rate, 0)
 
 	def get_address(self):
 		return self.address
@@ -222,18 +224,30 @@ class uhd_fft(grc_wxgui.top_block_gui):
 	def set_param_antenna(self, param_antenna):
 		self.param_antenna = param_antenna
 
-	def get_param_bcast_addr(self):
-		return self.param_bcast_addr
-
-	def set_param_bcast_addr(self, param_bcast_addr):
-		self.param_bcast_addr = param_bcast_addr
-
 	def get_param_channel_num(self):
 		return self.param_channel_num
 
 	def set_param_channel_num(self, param_channel_num):
 		self.param_channel_num = param_channel_num
 		self.set_subdev("A:0" if self.param_channel_num == 0 else "B:0")
+
+	def get_param_bcast_addr(self):
+		return self.param_bcast_addr
+
+	def set_param_bcast_addr(self, param_bcast_addr):
+		self.param_bcast_addr = param_bcast_addr
+
+	def get_param_fft_size(self):
+		return self.param_fft_size
+
+	def set_param_fft_size(self, param_fft_size):
+		self.param_fft_size = param_fft_size
+
+	def get_param_refresh_rate(self):
+		return self.param_refresh_rate
+
+	def set_param_refresh_rate(self, param_refresh_rate):
+		self.param_refresh_rate = param_refresh_rate
 
 	def get_subdev(self):
 		return self.subdev
@@ -245,31 +259,22 @@ class uhd_fft(grc_wxgui.top_block_gui):
 		return self.samp_rate
 
 	def set_samp_rate(self, samp_rate):
-		self.uhd_usrp_source_0.set_samp_rate(samp_rate)
-		self.samp_rate = self.uhd_usrp_source_0.get_samp_rate()
+		self.samp_rate = samp_rate
 		self.wxgui_scopesink2_0.set_sample_rate(self.samp_rate)
-		self.fft.set_sample_rate(self.samp_rate)
 		self._samp_rate_text_box.set_value(self.samp_rate)
+		self.uhd_usrp_source_0.set_samp_rate(self.samp_rate)
+		self.fft.set_sample_rate(self.samp_rate)
 		self.wxgui_waterfallsink2_0.set_sample_rate(self.samp_rate)
-
-	def get_gain(self):
-		return self.gain
-
-	def set_gain(self, gain):
-		self.gain = gain
-		self._gain_slider.set_value(self.gain)
-		self._gain_text_box.set_value(self.gain)
-		self.uhd_usrp_source_0.set_gain(self.gain, 0)
 
 	def get_freq(self):
 		return self.freq
 
 	def set_freq(self, freq):
 		self.freq = freq
+		self.uhd_usrp_source_0.set_center_freq(self.freq, 0)
 		self.fft.set_baseband_freq(self.freq)
 		self._freq_slider.set_value(self.freq)
 		self._freq_text_box.set_value(self.freq)
-		self.uhd_usrp_source_0.set_center_freq(self.freq, 0)
 
 if __name__ == '__main__':
 	parser = OptionParser(option_class=eng_option, usage="%prog: [options]")
@@ -283,11 +288,15 @@ if __name__ == '__main__':
 		help="Set IP address [default=%default]")
 	parser.add_option("-A", "--param-antenna", dest="param_antenna", type="string", default="RX1",
 		help="Set antenna [default=%default]")
-	parser.add_option("-b", "--param-bcast-addr", dest="param_bcast_addr", type="string", default="192.168.10.255",
-		help="Set UmTRX broadcast IP address [default=%default]")
 	parser.add_option("-c", "--param-channel-num", dest="param_channel_num", type="intx", default=0,
 		help="Set UmTRX channel number [default=%default]")
+	parser.add_option("-b", "--param-bcast-addr", dest="param_bcast_addr", type="string", default="192.168.10.255",
+		help="Set UmTRX broadcast IP address [default=%default]")
+	parser.add_option("", "--param-fft-size", dest="param_fft_size", type="intx", default=1024,
+		help="Set FFT size [default=%default]")
+	parser.add_option("", "--param-refresh-rate", dest="param_refresh_rate", type="intx", default=30,
+		help="Set FFT refresh rate [default=%default]")
 	(options, args) = parser.parse_args()
-	tb = uhd_fft(param_freq=options.param_freq, param_gain=options.param_gain, param_samp_rate=options.param_samp_rate, address=options.address, param_antenna=options.param_antenna, param_bcast_addr=options.param_bcast_addr, param_channel_num=options.param_channel_num)
+	tb = umtrx_fft_blank(param_freq=options.param_freq, param_gain=options.param_gain, param_samp_rate=options.param_samp_rate, address=options.address, param_antenna=options.param_antenna, param_channel_num=options.param_channel_num, param_bcast_addr=options.param_bcast_addr, param_fft_size=options.param_fft_size, param_refresh_rate=options.param_refresh_rate)
 	tb.Run(True)
 
