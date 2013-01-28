@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ASCII'?>
 <flow_graph>
-  <timestamp>Mon Jan 28 11:33:36 2013</timestamp>
+  <timestamp>Mon Jan 28 11:50:14 2013</timestamp>
   <block>
     <key>options</key>
     <param>
@@ -139,111 +139,6 @@
     <key>parameter</key>
     <param>
       <key>id</key>
-      <value>param_freq</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>label</key>
-      <value>frequency</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>935e6</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>eng_float</value>
-    </param>
-    <param>
-      <key>short_id</key>
-      <value>f</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(432, 14)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
-    <key>parameter</key>
-    <param>
-      <key>id</key>
-      <value>param_gain</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>label</key>
-      <value>gain</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>15</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>eng_float</value>
-    </param>
-    <param>
-      <key>short_id</key>
-      <value>g</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(542, 14)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
-    <key>parameter</key>
-    <param>
-      <key>id</key>
-      <value>param_samp_rate</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>label</key>
-      <value>sample rate</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>1e6</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>eng_float</value>
-    </param>
-    <param>
-      <key>short_id</key>
-      <value>r</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(305, 16)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
-    <key>parameter</key>
-    <param>
-      <key>id</key>
       <value>address</value>
     </param>
     <param>
@@ -311,10 +206,33 @@
     </param>
   </block>
   <block>
-    <key>parameter</key>
+    <key>import</key>
     <param>
       <key>id</key>
-      <value>param_antenna</value>
+      <value>import_0</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>import</key>
+      <value>import numpy</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(18, 129)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>variable_text_box</key>
+    <param>
+      <key>id</key>
+      <value>var_samp_rate</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -322,23 +240,31 @@
     </param>
     <param>
       <key>label</key>
-      <value>antenna</value>
+      <value>Sample Rate</value>
     </param>
     <param>
       <key>value</key>
-      <value>RX1</value>
+      <value>samp_rate</value>
     </param>
     <param>
-      <key>type</key>
-      <value>string</value>
+      <key>converver</key>
+      <value>float_converter</value>
     </param>
     <param>
-      <key>short_id</key>
-      <value>A</value>
+      <key>formatter</key>
+      <value>None</value>
+    </param>
+    <param>
+      <key>grid_pos</key>
+      <value>1, 0, 1, 1</value>
+    </param>
+    <param>
+      <key>notebook</key>
+      <value></value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(818, 12)</value>
+      <value>(358, 129)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -349,7 +275,167 @@
     <key>parameter</key>
     <param>
       <key>id</key>
-      <value>param_channel_num</value>
+      <value>samp_rate</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value>sample rate</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>1e6</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>eng_float</value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value>r</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(305, 16)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>variable_slider</key>
+    <param>
+      <key>id</key>
+      <value>var_freq</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value>RX Tune Frequency</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>freq</value>
+    </param>
+    <param>
+      <key>min</key>
+      <value>300e6</value>
+    </param>
+    <param>
+      <key>max</key>
+      <value>3e9</value>
+    </param>
+    <param>
+      <key>num_steps</key>
+      <value>1000</value>
+    </param>
+    <param>
+      <key>style</key>
+      <value>wx.SL_HORIZONTAL</value>
+    </param>
+    <param>
+      <key>converver</key>
+      <value>float_converter</value>
+    </param>
+    <param>
+      <key>grid_pos</key>
+      <value>1, 1, 1, 7</value>
+    </param>
+    <param>
+      <key>notebook</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(510, 128)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>id</key>
+      <value>freq</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value>frequency</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>935e6</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>eng_float</value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value>f</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(432, 14)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>id</key>
+      <value>gain</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value>gain</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>15</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>eng_float</value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value>g</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(542, 14)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>id</key>
+      <value>channel_num</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -381,29 +467,6 @@
     </param>
   </block>
   <block>
-    <key>import</key>
-    <param>
-      <key>id</key>
-      <value>import_0</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>import</key>
-      <value>import numpy</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(18, 129)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
     <key>variable</key>
     <param>
       <key>id</key>
@@ -415,7 +478,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>"A:0" if param_channel_num == 0 else "B:0"</value>
+      <value>"A:0" if channel_num == 0 else "B:0"</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -430,7 +493,7 @@
     <key>parameter</key>
     <param>
       <key>id</key>
-      <value>param_bcast_addr</value>
+      <value>antenna</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -438,11 +501,11 @@
     </param>
     <param>
       <key>label</key>
-      <value>UmTRX broadcast IP address</value>
+      <value>antenna</value>
     </param>
     <param>
       <key>value</key>
-      <value>192.168.10.255</value>
+      <value>RX1</value>
     </param>
     <param>
       <key>type</key>
@@ -450,89 +513,11 @@
     </param>
     <param>
       <key>short_id</key>
-      <value>b</value>
+      <value>A</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(936, 12)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
-    <key>parameter</key>
-    <param>
-      <key>id</key>
-      <value>param_fft_size</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>label</key>
-      <value>FFT size</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>1024</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>intx</value>
-    </param>
-    <param>
-      <key>short_id</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(956, 133)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
-    <key>variable_text_box</key>
-    <param>
-      <key>id</key>
-      <value>samp_rate</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>label</key>
-      <value>Sample Rate</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>param_samp_rate</value>
-    </param>
-    <param>
-      <key>converver</key>
-      <value>float_converter</value>
-    </param>
-    <param>
-      <key>formatter</key>
-      <value>None</value>
-    </param>
-    <param>
-      <key>grid_pos</key>
-      <value>1, 0, 1, 1</value>
-    </param>
-    <param>
-      <key>notebook</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(358, 129)</value>
+      <value>(818, 12)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -679,23 +664,23 @@
     </param>
     <param>
       <key>samp_rate</key>
-      <value>samp_rate</value>
+      <value>var_samp_rate</value>
     </param>
     <param>
       <key>center_freq0</key>
-      <value>freq</value>
+      <value>var_freq</value>
     </param>
     <param>
       <key>gain0</key>
-      <value>param_gain</value>
+      <value>gain</value>
     </param>
     <param>
       <key>ant0</key>
-      <value>RX1</value>
+      <value>antenna</value>
     </param>
     <param>
       <key>bw0</key>
-      <value>param_samp_rate</value>
+      <value>samp_rate</value>
     </param>
     <param>
       <key>center_freq1</key>
@@ -1226,7 +1211,7 @@
     </param>
     <param>
       <key>baseband_freq</key>
-      <value>freq</value>
+      <value>var_freq</value>
     </param>
     <param>
       <key>y_per_div</key>
@@ -1246,11 +1231,11 @@
     </param>
     <param>
       <key>fft_size</key>
-      <value>param_fft_size</value>
+      <value>fft_size</value>
     </param>
     <param>
       <key>fft_rate</key>
-      <value>param_refresh_rate</value>
+      <value>refresh_rate</value>
     </param>
     <param>
       <key>peak_hold</key>
@@ -1333,11 +1318,11 @@
     </param>
     <param>
       <key>fft_size</key>
-      <value>param_fft_size</value>
+      <value>fft_size</value>
     </param>
     <param>
       <key>fft_rate</key>
-      <value>param_refresh_rate</value>
+      <value>refresh_rate</value>
     </param>
     <param>
       <key>average</key>
@@ -1380,7 +1365,77 @@
     <key>parameter</key>
     <param>
       <key>id</key>
-      <value>param_refresh_rate</value>
+      <value>bcast_addr</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value>UmTRX broadcast IP address</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>192.168.10.255</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value>b</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(899, 13)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>id</key>
+      <value>fft_size</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value>FFT size</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>1024</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>intx</value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(902, 125)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>id</key>
+      <value>refresh_rate</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -1404,62 +1459,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(820, 133)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
-    <key>variable_slider</key>
-    <param>
-      <key>id</key>
-      <value>freq</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>label</key>
-      <value>RX Tune Frequency</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>param_freq</value>
-    </param>
-    <param>
-      <key>min</key>
-      <value>300e6</value>
-    </param>
-    <param>
-      <key>max</key>
-      <value>3e9</value>
-    </param>
-    <param>
-      <key>num_steps</key>
-      <value>1000</value>
-    </param>
-    <param>
-      <key>style</key>
-      <value>wx.SL_HORIZONTAL</value>
-    </param>
-    <param>
-      <key>converver</key>
-      <value>float_converter</value>
-    </param>
-    <param>
-      <key>grid_pos</key>
-      <value>1, 1, 1, 7</value>
-    </param>
-    <param>
-      <key>notebook</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(510, 128)</value>
+      <value>(765, 128)</value>
     </param>
     <param>
       <key>_rotation</key>
