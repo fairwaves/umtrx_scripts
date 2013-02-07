@@ -66,7 +66,7 @@ LPF_CODE_TO_BW = {
 
 # LPF bandwidth in MHz to LPF code
 # Just reverse LPF_CODE_TO_BW for simplicity
-LPF_BW_TO_CODE = {v:k for k, v in LPF_CODE_TO_BW.iteritems()}
+LPF_BW_TO_CODE = dict((v,k) for k, v in LPF_CODE_TO_BW.iteritems())
 
 
 # A list of reserved registers which read as junk
