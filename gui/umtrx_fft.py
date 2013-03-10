@@ -35,17 +35,6 @@ def create_umtrx_lms(lms_num, ip_address, bcast_addr):
             print "UmTRX is not found"
             sys.exit(1)
 
-        # Initialize and calibrate UmTRX
-        umtrx_lms.lms_init(umtrx_lms_dev)
-        umtrx_lms.lms_rx_enable(umtrx_lms_dev)
-        umtrx_lms.lms_tx_enable(umtrx_lms_dev)
-        # 0x0f - 0.75MHz
-        lpf_bw_code = 0x0f
-        pll_ref_clock = 26e6
-        umtrx_lms.lms_auto_calibration(umtrx_lms_dev, int(pll_ref_clock), int(lpf_bw_code))
-        umtrx_lms.lms_rx_disable(umtrx_lms_dev)
-        umtrx_lms.lms_tx_disable(umtrx_lms_dev)
-
         return umtrx_lms_dev
 
 
