@@ -18,7 +18,7 @@ send_lms_cmd()
 {
 #    echo "\n\n---------------------- $* ----------------------"
 #    read t
-    ./umtrx_lms.py --umtrx-addr=$UMTRX_IP --lms $LMS_NUM $*
+    ../python_lib/umtrx_lms.py --umtrx-addr=$UMTRX_IP --lms $LMS_NUM $*
 }
 
 send_lms_cmd --lms-init
