@@ -366,14 +366,14 @@ def lms_set_vga1dc_i_int(lms_dev, dc_shift_int):
     """ Set VGA1 DC offset, I channel
     dc_shift_int is an integer representation of the DC shift [0 .. 255]
     DC offset = (dc_shift_int - 128) / 16
-    Returns the old gain value on success, None on error"""
+    Returns the old offset value on success, None on error"""
     if not (0 <= dc_shift_int <= 255): return None
     return lms_dev.reg_write_bits(0x42, 0xff, dc_shift_int)
 
 def lms_set_vga1dc_i(lms_dev, dc_shift):
     """ Set VGA1 DC offset, I channel
     dc_shift is an a DC shift in mV [-16 .. 15.9375]
-    Returns the old gain value on success, None on error"""
+    Returns the old offset value on success, None on error"""
     old_bits = lms_set_vga1dc_i_int(lms_dev, int(dc_shift*16 + 128))
     return (float(old_bits) - 128) / 16
 
@@ -381,14 +381,14 @@ def lms_set_vga1dc_q_int(lms_dev, dc_shift_int):
     """ Set VGA1 DC offset, Q channel
     dc_shift_int is an integer representation of the DC shift [0 .. 255]
     DC offset = (dc_shift_int - 128) / 16
-    Returns the old gain value on success, None on error"""
+    Returns the old offset value on success, None on error"""
     if not (0 <= dc_shift_int <= 255): return None
     return lms_dev.reg_write_bits(0x43, 0xff, dc_shift_int)
 
 def lms_set_vga1dc_q(lms_dev, dc_shift):
     """ Set VGA1 DC offset, Q channel
     dc_shift is an a DC shift in mV [-16 .. 15.9375]
-    Returns old gan value on success, None on error"""
+    Returns old offset value on success, None on error"""
     old_bits = lms_set_vga1dc_q_int(lms_dev, int(dc_shift*16 + 128))
     return (float(old_bits) - 128) / 16
 
