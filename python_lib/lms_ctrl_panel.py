@@ -79,6 +79,30 @@ class lms_ctrl_panel(grc_wxgui.panel.Panel):
             )
         self.GridAdd(hbox, 2, 0, 1, 8)
         
+        # Tx VGA1 DC I offset
+        self.tx_vga1dc_i_int = umtrx_lms.lms_get_vga1dc_i_int(self.lms)
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        self.tx_vga1dc_i_int_slider = form.slider_field(
+            parent=self.GetWin(), sizer=hbox,
+            value=self.tx_vga1dc_i_int,
+            callback=self.set_tx_vga1dc_i_int,
+            label="\nTx VGA1 DC I offset (raw)",
+            min=0, max=255,
+            )
+        self.GridAdd(hbox, 3, 0, 1, 4)
+        
+        # Tx VGA1 DC Q offset
+        self.tx_vga1dc_q_int = umtrx_lms.lms_get_vga1dc_q_int(self.lms)
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        self.tx_vga1dc_q_int_slider = form.slider_field(
+            parent=self.GetWin(), sizer=hbox,
+            value=self.tx_vga1dc_q_int,
+            callback=self.set_tx_vga1dc_q_int,
+            label="\nTx VGA1 DC Q offset (raw)",
+            min=0, max=255,
+            )
+        self.GridAdd(hbox, 3, 4, 1, 4)
+        
     def set_rx_lna(self, value):
         print "set_rx_lna(%d)" % (value)
         umtrx_lms.lms_set_rx_lna(self.lms, value)
@@ -113,6 +137,14 @@ class lms_ctrl_panel(grc_wxgui.panel.Panel):
         self.rx_vga2gain = umtrx_lms.lms_get_rx_vga2gain(self.lms)
         self.rx_vga2gain_slider.set_value(self.rx_vga2gain)
         print "set_rx_vga2gain(%d) actual=%d" % (value, self.rx_vga2gain)
+        
+    def set_tx_vga1dc_i_int(self, value):
+        print "set_tx_vga1dc_i_int(%d)" % (value)
+        umtrx_lms.lms_set_vga1dc_i_int(self.lms, value)
+        
+    def set_tx_vga1dc_q_int(self, value):
+        print "set_tx_vga1dc_q_int(%d)" % (value)
+        umtrx_lms.lms_set_vga1dc_q_int(self.lms, value)
         
 
 # <codecell>
