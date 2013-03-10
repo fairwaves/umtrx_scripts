@@ -370,6 +370,11 @@ def lms_set_vga1dc_i_int(lms_dev, dc_shift_int):
     if not (0 <= dc_shift_int <= 255): return None
     return lms_dev.reg_write_bits(0x42, 0xff, dc_shift_int)
 
+def lms_get_vga1dc_i_int(lms_dev):
+    """ Get VGA1 DC offset, I channel
+    Returns the offset value on success, None on error"""
+    return lms_dev.reg_get_bits(0x42, 0xff, 0)
+
 def lms_set_vga1dc_i(lms_dev, dc_shift):
     """ Set VGA1 DC offset, I channel
     dc_shift is an a DC shift in mV [-16 .. 15.9375]
@@ -384,6 +389,11 @@ def lms_set_vga1dc_q_int(lms_dev, dc_shift_int):
     Returns the old offset value on success, None on error"""
     if not (0 <= dc_shift_int <= 255): return None
     return lms_dev.reg_write_bits(0x43, 0xff, dc_shift_int)
+
+def lms_get_vga1dc_q_int(lms_dev):
+    """ Get VGA1 DC offset, Q channel
+    Returns the offset value on success, None on error"""
+    return lms_dev.reg_get_bits(0x43, 0xff, 0)
 
 def lms_set_vga1dc_q(lms_dev, dc_shift):
     """ Set VGA1 DC offset, Q channel
