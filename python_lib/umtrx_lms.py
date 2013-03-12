@@ -89,14 +89,15 @@ def lms_txrx_pll_tune(lms_dev, base_reg, ref_clock, out_freq):
 
     vco_x = 1 << ((freqsel & 0x7) - 3)
     nint = int(vco_x * out_freq / ref_clock)
-    nfrack = int((1 << 23) * (vco_x * out_freq - nint * ref_clock) / ref_clock)
-    if verbosity > 0: print("FREQSEL=%d VCO_X=%d NINT=%d NFRACK=%d" % (freqsel, vco_x, nint, nfrack))
+    nfrac = int((1 << 23) * (vco_x * out_freq - nint * ref_clock) / ref_clock)
+    actual_freq = (nint + nfrac/float(1<<23)) * (ref_clock/vco_x);
+    if verbosity > 0: print("FREQSEL=%d VCO_X=%d NINT=%d NFRAC=%d" % (freqsel, vco_x, nint, nfrac))
 
     # Write NINT, NFRAC
     lms_dev.reg_write(base_reg+0x0, (nint >> 1) & 0xff) # NINT[8:1]
-    lms_dev.reg_write(base_reg+0x1, ((nfrack >> 16) & 0x7f) | ((nint & 0x1) << 7)) # NINT[0] NFRACK[22:16]
-    lms_dev.reg_write(base_reg+0x2, (nfrack >> 8) & 0xff) # NFRACK[15:8]
-    lms_dev.reg_write(base_reg+0x3, (nfrack) & 0xff) # NFRACK[7:0]
+    lms_dev.reg_write(base_reg+0x1, ((nfrac >> 16) & 0x7f) | ((nint & 0x1) << 7)) # NINT[0] NFRAC[22:16]
+    lms_dev.reg_write(base_reg+0x2, (nfrac >> 8) & 0xff) # NFRAC[15:8]
+    lms_dev.reg_write(base_reg+0x3, (nfrac) & 0xff) # NFRAC[7:0]
     # Write FREQSEL
     lms_dev.reg_write_bits(base_reg+0x5, (0x3f << 2), (freqsel << 2)) # FREQSEL[5:0]
     # Reset VOVCOREG, OFFDOWN to default
@@ -141,6 +142,7 @@ def lms_txrx_pll_tune(lms_dev, base_reg, ref_clock, out_freq):
     # Tune to the middle of the found VCOCAP range
     avg_i = int((start_i + stop_i) / 2)
     if verbosity > 0: print("START=%d STOP=%d SET=%d" % (start_i, stop_i, avg_i))
+    if verbosity > 0: print("Actual frequency: %f" % (actual_freq))
     lms_dev.reg_write_bits(base_reg+0x9, 0x3f, avg_i)
     return True
 
@@ -571,13 +573,13 @@ def lms_lpf_bandwidth_tuning(lms_dev, ref_clock, lpf_bandwidth_code):
     t = lms_dev.reg_write_bits(0x07, 0x0f, lpf_bandwidth_code)
     if verbosity >= 3: print("code = %x %x %x" % (lpf_bandwidth_code, t, lms_dev.reg_read(0x07)))
     # TopSPI::RST_CAL_LPFCAL := 1 (Rst Active)
-    rst_lpfcal_save = lms_dev.reg_set_bits(0x06, 0x01)
+    lms_dev.reg_set_bits(0x06, (1 << 0))
     # ...Delay 100ns...
     # TopSPI::RST_CAL_LPFCAL := 0 (Rst Inactive)
-    lms_dev.reg_write(0x06, rst_lpfcal_save & ~0x01)
+    lms_dev.reg_clear_bits(0x06, (1 << 0))
     # RCCAL := TopSPI::RCCAL_LPFCAL
     RCCAL = lms_dev.reg_read(0x01) >> 5
-    if verbosity >= 3: print("RCCAL = %d" % RCCAL)
+    if verbosity >= 0: print("RCCAL = %d" % RCCAL)
     # RxLPFSPI::RCCAL_LPF := RCCAL
     lms_dev.reg_write_bits(0x56, (7 << 4), (RCCAL << 4))
     # TxLPFSPI::RCCAL_LPF := RCCAL
