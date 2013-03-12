@@ -570,7 +570,8 @@ def lms_lpf_bandwidth_tuning(lms_dev, ref_clock, lpf_bandwidth_code):
     reg_save_06 = lms_dev.reg_clear_bits(0x06, (1 << 3) | (1 << 2))
 
     # Set TopSPI::BWC_LPFCAL
-    t = lms_dev.reg_write_bits(0x07, 0x0f, lpf_bandwidth_code)
+    # Set EN_CAL_LPFCAL := 1 (Block enabled)
+    t = lms_dev.reg_write_bits(0x07, 0x8f, (1<<7)|lpf_bandwidth_code)
     if verbosity >= 3: print("code = %x %x %x" % (lpf_bandwidth_code, t, lms_dev.reg_read(0x07)))
     # TopSPI::RST_CAL_LPFCAL := 1 (Rst Active)
     lms_dev.reg_set_bits(0x06, (1 << 0))
@@ -580,13 +581,16 @@ def lms_lpf_bandwidth_tuning(lms_dev, ref_clock, lpf_bandwidth_code):
     # RCCAL := TopSPI::RCCAL_LPFCAL
     RCCAL = lms_dev.reg_read(0x01) >> 5
     if verbosity >= 0: print("RCCAL = %d" % RCCAL)
-    # Shut down calibration.
-    # TopSPI::RST_CAL_LPFCAL := 1 (Rst Active)
-    lms_dev.reg_set_bits(0x06, (1 << 0))
     # RxLPFSPI::RCCAL_LPF := RCCAL
     lms_dev.reg_write_bits(0x56, (7 << 4), (RCCAL << 4))
     # TxLPFSPI::RCCAL_LPF := RCCAL
     lms_dev.reg_write_bits(0x36, (7 << 4), (RCCAL << 4))
+
+    # Shut down calibration.
+    # TopSPI::RST_CAL_LPFCAL := 1 (Rst Active)
+    lms_dev.reg_set_bits(0x06, (1 << 0))
+    # Set EN_CAL_LPFCAL := 0 (Block disabled)
+    lms_dev.reg_clear_bits(0x07, (1 << 7))
 
     # Restore registers 0x05, 0x06 and 0x09
     lms_dev.reg_write(0x06, reg_save_06)
