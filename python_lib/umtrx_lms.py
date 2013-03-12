@@ -580,6 +580,9 @@ def lms_lpf_bandwidth_tuning(lms_dev, ref_clock, lpf_bandwidth_code):
     # RCCAL := TopSPI::RCCAL_LPFCAL
     RCCAL = lms_dev.reg_read(0x01) >> 5
     if verbosity >= 0: print("RCCAL = %d" % RCCAL)
+    # Shut down calibration.
+    # TopSPI::RST_CAL_LPFCAL := 1 (Rst Active)
+    lms_dev.reg_set_bits(0x06, (1 << 0))
     # RxLPFSPI::RCCAL_LPF := RCCAL
     lms_dev.reg_write_bits(0x56, (7 << 4), (RCCAL << 4))
     # TxLPFSPI::RCCAL_LPF := RCCAL
