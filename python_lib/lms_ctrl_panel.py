@@ -65,7 +65,7 @@ class lms_ctrl_panel(grc_wxgui.panel.Panel):
             label="Rx VGA1 gain (raw)\n120=30dB, 102=19dB, 2=5dB",
             min=0, max=127,
             )
-        self.GridAdd(hbox, 1, 0, 1, 8)
+        self.GridAdd(hbox, 1, 0, 1, 4)
         
         # Rx VGA2 gain
         self.rx_vga2gain = umtrx_lms.lms_get_rx_vga2gain(self.lms)
@@ -77,7 +77,7 @@ class lms_ctrl_panel(grc_wxgui.panel.Panel):
             label="\nRx VGA2 gain (dB)",
             min=0, max=30,# Not recommended to use above 30
             )
-        self.GridAdd(hbox, 2, 0, 1, 8)
+        self.GridAdd(hbox, 1, 4, 1, 4)
         
         # Tx VGA1 DC I offset
         self.tx_vga1dc_i_int = umtrx_lms.lms_get_vga1dc_i_int(self.lms)
