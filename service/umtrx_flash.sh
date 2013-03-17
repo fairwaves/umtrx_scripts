@@ -46,4 +46,5 @@ $USRP_BURN_MB_EEPROM --args addr=$IP_ADDR --key tcxo-dac --val 2048
 
 # Flash FPGA and ZPU firmware images to flash.
 $USRP_N2XX_NET_BURNER --addr=$IP_ADDR --fpga=u2plus_umtrx.bin --overwrite-safe
+$USRP_N2XX_NET_BURNER --addr=$IP_ADDR --fpga=u2plus_umtrx.bin
 $USRP_N2XX_NET_BURNER --addr=$IP_ADDR --fw=usrp2p_txrx_uhd.bin
