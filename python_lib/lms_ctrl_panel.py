@@ -117,7 +117,7 @@ class lms_ctrl_panel(grc_wxgui.panel.Panel):
         
     def set_rx_vga1gain(self, value):
         # Don't set value twice
-        if self.rx_vga2gain == value: return
+        if self.rx_vga1gain == value: return
         print "set_rx_vga1gain(%d)" % (value)
         # Set the value
         umtrx_lms.lms_set_rx_vga1gain_int(self.lms, value)
