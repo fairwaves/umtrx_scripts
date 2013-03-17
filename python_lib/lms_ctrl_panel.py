@@ -102,6 +102,30 @@ class lms_ctrl_panel(grc_wxgui.panel.Panel):
             min=0, max=255,
             )
         self.GridAdd(hbox, 3, 4, 1, 4)
+
+        # Tx VGA1 gain
+        self.tx_vga1gain = umtrx_lms.lms_get_tx_vga1gain(self.lms)
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        self.tx_vga1gain_slider = form.slider_field(
+            parent=self.GetWin(), sizer=hbox,
+            value=self.tx_vga1gain,
+            callback=self.set_tx_vga1gain,
+            label="\nTx VGA1 gain (dB)",
+            min=-35, max=-4,
+            )
+        self.GridAdd(hbox, 4, 0, 1, 4)
+
+        # Tx VGA2 gain
+        self.tx_vga2gain = umtrx_lms.lms_get_tx_vga2gain(self.lms)
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        self.tx_vga2gain_slider = form.slider_field(
+            parent=self.GetWin(), sizer=hbox,
+            value=self.tx_vga2gain,
+            callback=self.set_tx_vga2gain,
+            label="\nTx VGA2 gain (dB)",
+            min=0, max=25,
+            )
+        self.GridAdd(hbox, 4, 4, 1, 4)
         
     def set_rx_lna(self, value):
         print "set_rx_lna(%d)" % (value)
@@ -146,6 +170,25 @@ class lms_ctrl_panel(grc_wxgui.panel.Panel):
         print "set_tx_vga1dc_q_int(%d)" % (value)
         umtrx_lms.lms_set_vga1dc_q_int(self.lms, value)
         
+    def set_tx_vga1gain(self, value):
+        # Don't set value twice
+        if self.tx_vga1gain == value: return
+        print "set_tx_vga1gain(%d)" % (value)
+        # Set the value
+        umtrx_lms.lms_set_tx_vga1gain(self.lms, value)
+        # Read back the value
+        self.tx_vga1gain = umtrx_lms.lms_get_tx_vga1gain(self.lms)
+        self.tx_vga1gain_slider.set_value(self.tx_vga1gain)
+
+    def set_tx_vga2gain(self, value):
+        # Don't set value twice
+        if self.tx_vga2gain == value: return
+        print "set_tx_vga2gain(%d)" % (value)
+        # Set the value
+        umtrx_lms.lms_set_tx_vga2gain(self.lms, value)
+        # Read back the value
+        self.tx_vga2gain = umtrx_lms.lms_get_tx_vga2gain(self.lms)
+        self.tx_vga2gain_slider.set_value(self.tx_vga2gain)
 
 # <codecell>
 
