@@ -28,6 +28,8 @@ USRP2_CONTROL_PROTO_VERSION = 11 # must match firmware proto
 CONTROL_FMT = '!LLL24x'
 CONTROL_IP_FMT = '!LLLL20x'
 SPI_FMT = '!LLLLLBBBB12x'
+ZPU_ACTION_FMT = '!LLLLL16x'
+
 n2xx_revs = {
   0x0a00: ["n200_r3", "n200_r2"],
   0x0a10: ["n200_r4"],
@@ -52,9 +54,13 @@ USRP2_CTRL_ID_GET_THIS_REGISTER_FOR_ME_BRO = ord('r')
 USRP2_CTRL_ID_OMG_GOT_REGISTER_SO_BAD_DUDE = ord('R')
 USRP2_CTRL_ID_HOLLER_AT_ME_BRO = ord('l')
 USRP2_CTRL_ID_HOLLER_BACK_DUDE = ord('L')
+UMTRX_CTRL_ID_ZPU_REQUEST  = ord('z')
+UMTRX_CTRL_ID_ZPU_RESPONSE = ord('Z')
 USRP2_CTRL_ID_PEACE_OUT = ord('~')
 SPI_EDGE_RISE = ord('r')
 SPI_EDGE_FALL = ord('f')
+UMTRX_ZPU_REQUEST_GET_VCTCXO_DAC = 1
+UMTRX_ZPU_REQUEST_SET_VCTCXO_DAC = 2
 
 def unpack_format(_str, fmt):
     return struct.unpack(fmt, _str)
@@ -64,6 +70,9 @@ def pack_control_fmt(proto_ver, pktid, seq):
 
 def pack_spi_fmt(proto_ver, pktid, seq, dev, data, miso, mosi, bits, read):
     return struct.pack(SPI_FMT, proto_ver, pktid, seq, dev, data, miso, mosi, bits, read)
+
+def pack_zpu_action_fmt(proto_ver, pktid, seq, action, data):
+    return struct.pack(ZPU_ACTION_FMT, proto_ver, pktid, seq, action, data)
 
 def recv_item(skt, fmt, chk, ind):
     try:
@@ -153,10 +162,22 @@ class umtrx_lms_device:
 class umtrx_vcxo_dac:
 
     def __init__(self, umtrx_socket, net_address):
-        self.spi = umtrx_dev_spi(umtrx_socket, net_address, 4, out_edge=SPI_EDGE_FALL)
+        self.skt = umtrx_socket
+        self.addr = net_address
+#        self.spi = umtrx_dev_spi(umtrx_socket, net_address, 4, out_edge=SPI_EDGE_FALL)
+
+    def zpu_action(self, action, data=0):
+        self.skt.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 0)
+        out_pkt = pack_zpu_action_fmt(USRP2_CONTROL_PROTO_VERSION, UMTRX_CTRL_ID_ZPU_REQUEST, \
+                                      0, action, data)
+        self.skt.sendto(out_pkt, (self.addr, UDP_CONTROL_PORT))
+        return recv_item(self.skt, ZPU_ACTION_FMT, UMTRX_CTRL_ID_ZPU_RESPONSE, 4)
 
     def set_dac(self, v):
-        self.spi.spi_rw(v, 16, 0)
+        self.zpu_action(UMTRX_ZPU_REQUEST_SET_VCTCXO_DAC, v)
+
+    def get_dac(self):
+        return self.zpu_action(UMTRX_ZPU_REQUEST_GET_VCTCXO_DAC)
 
 def create_umtrx_lms_device(lms_number, ip_address=None, bcast_addr="192.168.10.255"):
     ''' Fabric function to create UmTRX LMS device class '''

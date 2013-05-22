@@ -40,8 +40,10 @@ if __name__ == '__main__':
         if umtrx_ctrl.ping(sock, umtrx): # UmTRX probed
             print('UmTRX detected at %s' % umtrx)
             umtrx_vcxo_dev = umtrx_ctrl.umtrx_vcxo_dac(sock, umtrx)
+            print('Current DAC value: %d' % umtrx_vcxo_dev.get_dac())
             if args.dac is not None:
                 umtrx_vcxo_dev.set_dac(args.dac)
+                print('Set DAC to value: %d' % umtrx_vcxo_dev.get_dac())
         else:
             print('UmTRX at %s is not responding.' % umtrx)
     else:
