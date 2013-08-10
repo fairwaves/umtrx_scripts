@@ -81,7 +81,7 @@ def recv_item(skt, fmt, chk, ind):
 #        print("Received %d bytes: %x, '%c', %x" % (len(pkt), pkt_list[0], pkt_list[1], pkt_list[2]))
         if pkt_list[1] != chk:
             return None
-        return pkt_list[ind]
+        return (pkt_list[ind],pkt_list[0])
     except socket.timeout:
         return None
 
@@ -97,7 +97,9 @@ def detect(skt, bcast_addr):
     out_pkt = pack_control_fmt(USRP2_CONTROL_PROTO_VERSION, UMTRX_CTRL_ID_REQUEST, 0)
 #    print(" Sending %d bytes: %x, '%c',.." % (len(out_pkt), USRP2_CONTROL_PROTO_VERSION, UMTRX_CTRL_ID_REQUEST))
     skt.sendto(out_pkt, (bcast_addr, UDP_CONTROL_PORT))
-    response = recv_item(skt, CONTROL_IP_FMT, UMTRX_CTRL_ID_RESPONSE, 3)
+    response,version = recv_item(skt, CONTROL_IP_FMT, UMTRX_CTRL_ID_RESPONSE, 3)
+    if version != USRP2_CONTROL_PROTO_VERSION:
+        print("Error: You Firmware is too old! fw ver: %d fw required: %d" % (version, USRP2_CONTROL_PROTO_VERSION))
     if response:
         return socket.inet_ntoa(struct.pack("<L", socket.ntohl(response)))
     return None
@@ -122,7 +124,8 @@ class umtrx_dev_spi:
         out_pkt = pack_spi_fmt(USRP2_CONTROL_PROTO_VERSION, USRP2_CTRL_ID_TRANSACT_ME_SOME_SPI_BRO, \
                                0, self.spi_num, data, self.in_edge, self.out_edge, num_bits, readback)
         self.skt.sendto(out_pkt, (self.addr, UDP_CONTROL_PORT))
-        return recv_item(self.skt, SPI_FMT, USRP2_CTRL_ID_OMG_TRANSACTED_SPI_DUDE, 4)
+        ret,_ = recv_item(self.skt, SPI_FMT, USRP2_CTRL_ID_OMG_TRANSACTED_SPI_DUDE, 4) 
+        return ret
 
 class umtrx_lms_device:
 
@@ -171,7 +174,8 @@ class umtrx_vcxo_dac:
         out_pkt = pack_zpu_action_fmt(USRP2_CONTROL_PROTO_VERSION, UMTRX_CTRL_ID_ZPU_REQUEST, \
                                       0, action, data)
         self.skt.sendto(out_pkt, (self.addr, UDP_CONTROL_PORT))
-        return recv_item(self.skt, ZPU_ACTION_FMT, UMTRX_CTRL_ID_ZPU_RESPONSE, 4)
+        ret,_ = recv_item(self.skt, ZPU_ACTION_FMT, UMTRX_CTRL_ID_ZPU_RESPONSE, 4)
+        return ret
 
     def set_dac(self, v):
         self.zpu_action(UMTRX_ZPU_REQUEST_SET_VCTCXO_DAC, v)
