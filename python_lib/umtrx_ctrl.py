@@ -22,7 +22,8 @@ UDP_CONTROL_PORT = 49152
 UDP_MAX_XFER_BYTES = 1024
 UDP_TIMEOUT = 1
 UDP_POLL_INTERVAL = 0.10 #in seconds
-USRP2_CONTROL_PROTO_VERSION = 11 # must match firmware proto
+USRP2_CONTROL_PROTO_VERSION = 11 # Must match firmware proto. We're setting it in detect()
+supported_control_proto_versions = [11, 12]
 
 # see fw_common.h
 CONTROL_FMT = '!LLL24x'
@@ -80,10 +81,10 @@ def recv_item(skt, fmt, chk, ind):
         pkt_list = unpack_format(pkt, fmt)
 #        print("Received %d bytes: %x, '%c', %x" % (len(pkt), pkt_list[0], pkt_list[1], pkt_list[2]))
         if pkt_list[1] != chk:
-            return None
+            return (None,None)
         return (pkt_list[ind],pkt_list[0])
     except socket.timeout:
-        return None
+        return (None,None)
 
 def ping(skt, addr):
     skt.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -92,17 +93,21 @@ def ping(skt, addr):
     return recv_item(skt, CONTROL_FMT, UMTRX_CTRL_ID_RESPONSE, 1)
 
 def detect(skt, bcast_addr):
+    global USRP2_CONTROL_PROTO_VERSION
 #    print('Detecting UmTRX over %s:' % bcast_addr)
     skt.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)    
     out_pkt = pack_control_fmt(USRP2_CONTROL_PROTO_VERSION, UMTRX_CTRL_ID_REQUEST, 0)
 #    print(" Sending %d bytes: %x, '%c',.." % (len(out_pkt), USRP2_CONTROL_PROTO_VERSION, UMTRX_CTRL_ID_REQUEST))
     skt.sendto(out_pkt, (bcast_addr, UDP_CONTROL_PORT))
     response,version = recv_item(skt, CONTROL_IP_FMT, UMTRX_CTRL_ID_RESPONSE, 3)
-    if version != USRP2_CONTROL_PROTO_VERSION:
-        print("Error: You Firmware is too old! fw ver: %d fw required: %d" % (version, USRP2_CONTROL_PROTO_VERSION))
-    if response:
-        return socket.inet_ntoa(struct.pack("<L", socket.ntohl(response)))
-    return None
+    if version is None or response is None:
+        return None
+    if not version in supported_control_proto_versions:
+        print("Error: You Firmware is too old! Your protocol ver: %d. Protocol ver required: [%s]\n"
+              % (version, ", ".join([str(x) for x in supported_control_proto_versions])))
+    # If we support this version - use it
+    USRP2_CONTROL_PROTO_VERSION = version
+    return socket.inet_ntoa(struct.pack("<L", socket.ntohl(response)))
 
 class umtrx_dev_spi:
     """ A class for talking to a device sitting on the SPI bus of UmTRX """
