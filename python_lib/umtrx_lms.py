@@ -724,7 +724,7 @@ if __name__ == '__main__':
             exit('--reg makes no sense with --lms-init, aborting.')
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.settimeout(umtrx_ctrl.UDP_TIMEOUT)
-    umtrx = args.umtrx if args.umtrx is not None else umtrx_ctrl.detect(sock, args.bcast_addr)
+    umtrx = umtrx_ctrl.detect(sock, args.umtrx if args.umtrx is not None else args.bcast_addr)
     if umtrx is not None: # UmTRX address established
         if umtrx_ctrl.ping(sock, umtrx): # UmTRX probed
             umtrx_lms_dev = umtrx_ctrl.umtrx_lms_device(sock, umtrx, args.lms if args.lms else 1)

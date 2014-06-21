@@ -192,7 +192,7 @@ def create_umtrx_lms_device(lms_number, ip_address=None, bcast_addr="192.168.10.
     ''' Fabric function to create UmTRX LMS device class '''
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.settimeout(UDP_TIMEOUT)
-    umtrx_addr = ip_address if ip_address is not None else detect(sock, bcast_addr)
+    umtrx_addr = detect(sock, ip_address if ip_address is not None else bcast_addr)
     umtrx_lms_dev = None
     if umtrx_addr is not None: # UmTRX address established
         if ping(sock, umtrx_addr): # UmTRX probed
