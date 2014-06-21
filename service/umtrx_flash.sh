@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Program UmTRX FPGA bitstream and ZPU firmware. Used by a factory.
+
 ######## CONFIGURATION START ########
 
 # USE_JTAG - "yes" to use xc3sprog to load initial FPGA image.
@@ -30,8 +32,9 @@ fi
 # Load values from command line and settings
 SERNUM=$1
 
-
-# FPGA JTAG flashing without writing to flash.
+# Write FPGA bitstream over JTAG to RAM (skipping flash). It will work as a
+# temporary bootloader for later flashing over Ethernet. We don't write
+# directly to flash (with `-I` option), because it rarely works.
 if [ "x$USE_JTAG" = "xyes" ] ; then
     sudo $XC3SPRO -c jtaghs1 u2plus_umtrx_v2.bit
 fi
@@ -44,7 +47,7 @@ $USRP_BURN_MB_EEPROM --args addr=$IP_ADDR --key mac-addr --val 00:50:c2:85:3f:ff
 $USRP_BURN_MB_EEPROM --args addr=$IP_ADDR --key ip-addr  --val 192.168.10.2
 $USRP_BURN_MB_EEPROM --args addr=$IP_ADDR --key tcxo-dac --val 2048
 
-# Flash FPGA and ZPU firmware images to flash.
+# Flash FPGA bitstream and ZPU firmware images to flash, over Ethernet.
 $USRP_N2XX_NET_BURNER --addr=$IP_ADDR --fpga=u2plus_umtrx.bin --overwrite-safe
 $USRP_N2XX_NET_BURNER --addr=$IP_ADDR --fpga=u2plus_umtrx.bin
 $USRP_N2XX_NET_BURNER --addr=$IP_ADDR --fw=usrp2p_txrx_uhd.bin
