@@ -139,7 +139,7 @@ class umtrx_lms_device:
         self.verbosity = 0
 
     def reg_read(self, reg):
-        data = self.spi.spi_rw(reg << 8, 16, 1)
+        data = self.spi.spi_rw(reg << 8, 16, 1) & ((1<<8)-1)
         if self.verbosity > 0: print("REG READ  0x%x -> 0x%x" % (reg, data,))
         return data
 
