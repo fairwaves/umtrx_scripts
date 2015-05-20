@@ -279,17 +279,17 @@ def lms_get_rx_lna_gain(lms_dev):
     return gain
 
 def lms_set_rx_vga1gain_int(lms_dev, gain):
-    """ Set Rx VGA1 gain.
-    gain is raw values [0 .. 127]
+    """ Set Rx VGA1 gain raw value.
+    gain is raw values [0 .. 120]
     Returns the old gain value on success, None on error"""
-    if not (0 <= gain <= 127):
+    if not (0 <= gain <= 120):
         return None
     old_bits = lms_dev.reg_write_bits(0x76, 0x7f, gain)
     return old_bits & 0x7f
 
 def lms_get_rx_vga1gain_int(lms_dev):
-    """ Get Rx VGA1 gain in dB.
-    gain is in [0 .. 127] range of abstract values
+    """ Get Rx VGA1 gain raw value.
+    gain is in [0 .. 120] range of abstract values
     Returns the gain value on success, None on error"""
     gain = lms_dev.reg_get_bits(0x76, 0x7f, 0)
     return gain
@@ -694,8 +694,8 @@ if __name__ == '__main__':
     adv_opt.add_argument('--lms-get-tx-vga1-gain', action = 'store_true', help = 'Get Tx VGA1 gain, in dB')
     adv_opt.add_argument('--lms-set-tx-vga2-gain', type = int, choices = range(0, 26), metavar = '[0..25]', help = 'Set Tx VGA2 gain, in dB')
     adv_opt.add_argument('--lms-get-tx-vga2-gain', action = 'store_true', help = 'Get Tx VGA2 gain, in dB')
-    adv_opt.add_argument('--lms-set-rx-vga1-gain-int', type = int, choices = range(0, 128), metavar = '[0..127]', help = 'Set Rx VGA1 gain, in abstract values. 120=30dB, 102=19dB, 2=5dB.')
-    adv_opt.add_argument('--lms-get-rx-vga1-gain-int', action = 'store_true', help = 'Get Rx VGA1 gain, in abstract values')
+    adv_opt.add_argument('--lms-set-rx-vga1-gain-int', type = int, choices = range(0, 121), metavar = '[0..120]', help = 'Set Rx VGA1 gain raw value. 120=30dB, 102=19dB, 2=5dB')
+    adv_opt.add_argument('--lms-get-rx-vga1-gain-int', action = 'store_true', help = 'Get Rx VGA1 gain raw value')
     adv_opt.add_argument('--lms-set-rx-vga2-gain', type = int, choices = range(0, 61), metavar = '[0..60]', help = 'Set Rx VGA2 gain, in dB with 3dB accuracy.')
     adv_opt.add_argument('--lms-get-rx-vga2-gain', action = 'store_true', help = 'Get Rx VGA2 gain, in dB')
     adv_opt.add_argument('--lms-tune-vga1-dc-i', action = 'store_true', help = 'Interactive tuning of TxVGA1 DC shift, I channel')
@@ -785,7 +785,7 @@ if __name__ == '__main__':
                 gain = lms_get_tx_vga2gain(umtrx_lms_dev)
                 print(gain)
             elif args.lms_set_rx_vga1_gain_int is not None:
-                lms_set_rx_vga1gain_int(umtrx_lms_dev, int(args.lms_set_rx_vga1_gain))
+                lms_set_rx_vga1gain_int(umtrx_lms_dev, int(args.lms_set_rx_vga1_gain_int))
             elif args.lms_get_rx_vga1_gain_int:
                 gain = lms_get_rx_vga1gain_int(umtrx_lms_dev)
                 print(gain)
