@@ -1,0 +1,13 @@
+Source: umtrx-scripts
+Section: libs
+Priority: extra
+Maintainer: Kirill Zakharenko <earwin@gmail.com>
+Build-Depends: debhelper (>= 9.0.0~)
+Standards-Version: 3.9.5
+
+Package: umtrx-scripts
+Architecture: all
+Depends:	${misc:Depends},
+            python
+Description: UmTRX assorted scripts
+  UmTRX assorted scripts
