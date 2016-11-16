@@ -719,6 +719,10 @@ if __name__ == '__main__':
     adv_opt.add_argument('--lms-get-rx-vga1-gain', action = 'store_true', help = 'Get Rx VGA1 gain in dB')
     adv_opt.add_argument('--lms-set-rx-vga2-gain', type = int, choices = range(0, 61), metavar = '[0..60]', help = 'Set Rx VGA2 gain, in dB with 3dB accuracy.')
     adv_opt.add_argument('--lms-get-rx-vga2-gain', action = 'store_true', help = 'Get Rx VGA2 gain, in dB')
+    adv_opt.add_argument('--lms-set-vga1-dc-i', type = int, choices = range(0, 255), metavar = '[0..255]', help = 'Set TxVGA1 DC shift, I channel.')
+    adv_opt.add_argument('--lms-get-vga1-dc-i', action = 'store_true', help = 'Get TxVGA1 DC shift, I channel')
+    adv_opt.add_argument('--lms-set-vga1-dc-q', type = int, choices = range(0, 255), metavar = '[0..255]', help = 'Set TxVGA1 DC shift, q channel.')
+    adv_opt.add_argument('--lms-get-vga1-dc-q', action = 'store_true', help = 'Get TxVGA1 DC shift, q channel')
     adv_opt.add_argument('--lms-tune-vga1-dc-i', action = 'store_true', help = 'Interactive tuning of TxVGA1 DC shift, I channel')
     adv_opt.add_argument('--lms-tune-vga1-dc-q', action = 'store_true', help = 'Interactive tuning of TxVGA1 DC shift, Q channel')
     adv_opt.add_argument('--enable-loopback', action = 'store_true', help = 'enable loopback')
@@ -820,6 +824,16 @@ if __name__ == '__main__':
             elif args.lms_get_rx_vga2_gain:
                 gain = lms_get_rx_vga2gain(umtrx_lms_dev)
                 print(gain)
+            elif args.lms_set_vga1_dc_i is not None:
+                lms_set_vga1dc_i_int(umtrx_lms_dev, int(args.lms_set_vga1_dc_i))
+            elif args.lms_get_vga1_dc_i:
+                dc_offset = lms_get_vga1dc_i_int(umtrx_lms_dev)
+                print(dc_offset)
+            elif args.lms_set_vga1_dc_q is not None:
+                lms_set_vga1dc_q_int(umtrx_lms_dev, int(args.lms_set_vga1_dc_q))
+            elif args.lms_get_vga1_dc_q:
+                dc_offset = lms_get_vga1dc_q_int(umtrx_lms_dev)
+                print(dc_offset)
             elif args.lms_tune_vga1_dc_i:
                 for i in range(110, 130, 1):
                     print("DC offset %f (%d)" % (float(i-128)/16, i))
