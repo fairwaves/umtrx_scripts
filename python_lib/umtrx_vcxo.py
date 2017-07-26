@@ -19,9 +19,14 @@
 import socket, argparse, time
 import umtrx_ctrl
 
+description = """ UmTRX VCTCXO control tool.
+When run without any command line parameters, it reads various information from UmTRX and print it to screen.
+When run with command line parameters, specified actions are applied as well.
+"""
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description = 'UmTRX VCXO debugging tool.', epilog = "UmTRX is detected via broadcast unless explicit address is specified via --umtrx-addr option. 'None' returned while reading\writing indicates error in the process.")
+    parser = argparse.ArgumentParser(description = description,
+        epilog = "UmTRX is detected via broadcast unless explicit address is specified via --umtrx-addr option. 'None' returned while reading\writing indicates error in the process.")
     parser.add_argument('--version', action='version', version='%(prog)s 1.0')
 
     basic_opt = parser.add_mutually_exclusive_group()
