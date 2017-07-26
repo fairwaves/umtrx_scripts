@@ -28,7 +28,7 @@ if __name__ == '__main__':
     basic_opt.add_argument('--detect', dest = 'bcast_addr', default = '192.168.10.255', help='broadcast domain where UmTRX should be discovered (default: 192.168.10.255)')
     basic_opt.add_argument('--umtrx-addr', dest = 'umtrx', const = '192.168.10.2', nargs='?', help = 'UmTRX address (default: 192.168.10.2)')
 
-    parser.add_argument('--dac-value', dest = 'dac', type = int, help = '12 bit value to use as DAC value')
+    parser.add_argument('--dac-value', dest = 'dac', type = int, help = 'Set VCTCXO DAC to this value (12 bit)')
 
     args = parser.parse_args()
 
