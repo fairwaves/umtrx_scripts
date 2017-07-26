@@ -29,6 +29,7 @@ if __name__ == '__main__':
     basic_opt.add_argument('--umtrx-addr', dest = 'umtrx', const = '192.168.10.2', nargs='?', help = 'UmTRX address (default: 192.168.10.2)')
 
     parser.add_argument('--dac-value', dest = 'dac', type = int, help = 'Set VCTCXO DAC to this value (12 bit)')
+    parser.add_argument('--gpsdo-debug', dest = 'gpsdo_debug', type = int, help = 'Enable/disable GPSDO debug')
 
     args = parser.parse_args()
 
@@ -40,7 +41,12 @@ if __name__ == '__main__':
         if umtrx_ctrl.ping(sock, umtrx): # UmTRX probed
             print('UmTRX detected at %s' % umtrx)
             umtrx_vcxo_dev = umtrx_ctrl.umtrx_vcxo_dac(sock, umtrx)
+            if args.gpsdo_debug is not None:
+                umtrx_vcxo_dev.set_gpsdo_debug(args.gpsdo_debug)
+                print('Set GPSDO debug to: %s' % (str(args.gpsdo_debug),))
             print('Current DAC value: %d' % umtrx_vcxo_dev.get_dac())
+            print('Current TCXO frequency (immediate): %d' % umtrx_vcxo_dev.get_gpsdo_freq())
+            print('Current TCXO frequency (filtered):  %.3f' % (umtrx_vcxo_dev.get_gpsdo_freq_lpf()/8))
             if args.dac is not None:
                 umtrx_vcxo_dev.set_dac(args.dac)
                 print('Set DAC to value: %d' % umtrx_vcxo_dev.get_dac())

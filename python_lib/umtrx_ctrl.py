@@ -62,6 +62,11 @@ SPI_EDGE_RISE = ord('r')
 SPI_EDGE_FALL = ord('f')
 UMTRX_ZPU_REQUEST_GET_VCTCXO_DAC = 1
 UMTRX_ZPU_REQUEST_SET_VCTCXO_DAC = 2
+UMTRX_ZPU_REQUEST_SET_GPSDO_DEBUG = 3
+UMTRX_ZPU_REQUEST_GET_GPSDO_FREQ = 4
+UMTRX_ZPU_REQUEST_GET_GPSDO_FREQ_LPF = 5
+UMTRX_ZPU_REQUEST_GET_GPSDO_PPS_SECS = 6
+UMTRX_ZPU_REQUEST_SET_GPSDO_PPS_TICKS = 7
 
 def unpack_format(_str, fmt):
     return struct.unpack(fmt, _str)
@@ -187,6 +192,22 @@ class umtrx_vcxo_dac:
 
     def get_dac(self):
         return self.zpu_action(UMTRX_ZPU_REQUEST_GET_VCTCXO_DAC)
+
+    def set_gpsdo_debug(self, v):
+        self.zpu_action(UMTRX_ZPU_REQUEST_SET_GPSDO_DEBUG, v)
+
+    def get_gpsdo_freq(self):
+        return self.zpu_action(UMTRX_ZPU_REQUEST_GET_GPSDO_FREQ)
+
+    def get_gpsdo_freq_lpf(self):
+        return self.zpu_action(UMTRX_ZPU_REQUEST_GET_GPSDO_FREQ_LPF)
+
+    def get_gpsdo_pps_secs(self):
+        return self.zpu_action(UMTRX_ZPU_REQUEST_GET_GPSDO_PPS_SECS)
+
+    def get_gpsdo_pps_ticks(self):
+        return self.zpu_action(UMTRX_ZPU_REQUEST_GET_GPSDO_PPS_TICKS)
+
 
 def create_umtrx_lms_device(lms_number, ip_address=None, bcast_addr="192.168.10.255"):
     ''' Fabric function to create UmTRX LMS device class '''
