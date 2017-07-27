@@ -22,7 +22,7 @@ UDP_CONTROL_PORT = 49152
 UDP_MAX_XFER_BYTES = 1024
 UDP_TIMEOUT = 1
 UDP_POLL_INTERVAL = 0.10 #in seconds
-USRP2_CONTROL_PROTO_VERSION = 11 # Must match firmware proto. We're setting it in detect()
+USRP2_CONTROL_PROTO_VERSION = 12 # Must match firmware proto. We're setting it in detect()
 supported_control_proto_versions = [11, 12]
 
 # see fw_common.h
