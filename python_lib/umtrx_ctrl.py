@@ -28,7 +28,7 @@ supported_control_proto_versions = [11, 12]
 # see fw_common.h
 CONTROL_FMT = '!LLL24x'
 CONTROL_IP_FMT = '!LLLL20x'
-SPI_FMT = '!LLLLLBBBB12x'
+SPI_FMT =        '!LLLLLBBBB12x'
 ZPU_ACTION_FMT = '!LLLLL16x'
 
 n2xx_revs = {
@@ -177,7 +177,6 @@ class umtrx_vcxo_dac:
     def __init__(self, umtrx_socket, net_address):
         self.skt = umtrx_socket
         self.addr = net_address
-#        self.spi = umtrx_dev_spi(umtrx_socket, net_address, 4, out_edge=SPI_EDGE_FALL)
 
     def zpu_action(self, action, data=0):
         self.skt.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 0)
