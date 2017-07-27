@@ -30,6 +30,7 @@ CONTROL_FMT = '!LLL24x'
 CONTROL_IP_FMT = '!LLLL20x'
 SPI_FMT =        '!LLLLLBBBB12x'
 ZPU_ACTION_FMT = '!LLLLL16x'
+REG_ACTION_FMT = '!LLLLLB15x'
 
 n2xx_revs = {
   0x0a00: ["n200_r3", "n200_r2"],
@@ -60,6 +61,14 @@ UMTRX_CTRL_ID_ZPU_RESPONSE = ord('Z')
 USRP2_CTRL_ID_PEACE_OUT = ord('~')
 SPI_EDGE_RISE = ord('r')
 SPI_EDGE_FALL = ord('f')
+# Register control packet actions
+USRP2_REG_ACTION_FPGA_PEEK32 = 1
+USRP2_REG_ACTION_FPGA_PEEK16 = 2
+USRP2_REG_ACTION_FPGA_POKE32 = 3
+USRP2_REG_ACTION_FPGA_POKE16 = 4
+USRP2_REG_ACTION_FW_PEEK32   = 5
+USRP2_REG_ACTION_FW_POKE32   = 6
+# ZPU control packet actions
 UMTRX_ZPU_REQUEST_GET_VCTCXO_DAC = 1
 UMTRX_ZPU_REQUEST_SET_VCTCXO_DAC = 2
 UMTRX_ZPU_REQUEST_SET_GPSDO_DEBUG = 3
@@ -67,6 +76,37 @@ UMTRX_ZPU_REQUEST_GET_GPSDO_FREQ = 4
 UMTRX_ZPU_REQUEST_GET_GPSDO_FREQ_LPF = 5
 UMTRX_ZPU_REQUEST_GET_GPSDO_PPS_SECS = 6
 UMTRX_ZPU_REQUEST_SET_GPSDO_PPS_TICKS = 7
+###
+### FPGA registers
+###
+# FPGA slave bases
+ROUTER_RAM_BASE    = 0x4000
+SPI_BASE           = 0x5000
+I2C_BASE           = 0x5400
+GPIO_BASE          = 0x5800
+READBACK_BASE      = 0x5C00
+ETH_BASE           = 0x6000
+SETTING_REGS_BASE  = 0x7000
+PIC_BASE           = 0x8000
+I2C_AUX_BASE       = 0x8400
+UART_BASE          = 0x8800
+ATR_BASE           = 0x8C00
+# FPGA Readback regs
+U2_REG_SPI_RB = READBACK_BASE + 4*0
+U2_REG_NUM_DDC = READBACK_BASE + 4*1
+U2_REG_NUM_DUC = READBACK_BASE + 4*2
+U2_REG_STATUS = READBACK_BASE + 4*8
+U2_REG_TIME64_HI_RB_IMM = READBACK_BASE + 4*10
+U2_REG_TIME64_LO_RB_IMM = READBACK_BASE + 4*11
+U2_REG_COMPAT_NUM_RB = READBACK_BASE + 4*12
+U2_REG_IRQ_RB = READBACK_BASE + 4*13
+U2_REG_TIME64_HI_RB_PPS = READBACK_BASE + 4*14
+U2_REG_TIME64_LO_RB_PPS = READBACK_BASE + 4*15
+###
+### Firmware registers
+###
+U2_FW_REG_GIT_HASH = 6
+U2_FW_REG_VER_MINOR = 7
 
 def unpack_format(_str, fmt):
     return struct.unpack(fmt, _str)
@@ -79,6 +119,9 @@ def pack_spi_fmt(proto_ver, pktid, seq, dev, data, miso, mosi, bits, read):
 
 def pack_zpu_action_fmt(proto_ver, pktid, seq, action, data):
     return struct.pack(ZPU_ACTION_FMT, proto_ver, pktid, seq, action, data)
+
+def pack_reg_action_fmt(proto_ver, pktid, seq, addr, data, action):
+    return struct.pack(REG_ACTION_FMT, proto_ver, pktid, seq, addr, data, action)
 
 def recv_item(skt, fmt, chk, ind):
     try:
@@ -207,6 +250,51 @@ class umtrx_vcxo_dac:
     def get_gpsdo_pps_ticks(self):
         return self.zpu_action(UMTRX_ZPU_REQUEST_GET_GPSDO_PPS_TICKS)
 
+class umtrx_registers:
+
+    def __init__(self, umtrx_socket, net_address):
+        self.skt = umtrx_socket
+        self.addr = net_address
+
+    def reg_action(self, addr, action, data=0, return_proto_version=False):
+        self.skt.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 0)
+        out_pkt = pack_reg_action_fmt(USRP2_CONTROL_PROTO_VERSION, USRP2_CTRL_ID_GET_THIS_REGISTER_FOR_ME_BRO, \
+                                      0, addr, data, action)
+        self.skt.sendto(out_pkt, (self.addr, UDP_CONTROL_PORT))
+        ret,proto_ver = recv_item(self.skt, ZPU_ACTION_FMT, USRP2_CTRL_ID_OMG_GOT_REGISTER_SO_BAD_DUDE, 4)
+        if return_proto_version:
+            return (ret, proto_ver)
+        else:
+            return ret
+
+    def poke32(self, addr, data):
+        self.reg_action(addr, USRP2_REG_ACTION_FPGA_POKE32, data)
+
+    def peek32(self, addr):
+        return self.reg_action(addr, USRP2_REG_ACTION_FPGA_PEEK32)
+
+    def poke16(self, addr, data):
+        self.reg_action(addr, USRP2_REG_ACTION_FPGA_POKE16, data)
+
+    def peek16(self, addr):
+        return self.reg_action(addr, USRP2_REG_ACTION_FPGA_PEEK16)
+
+    def pokefw(self, addr, data):
+        self.reg_action(addr, USRP2_REG_ACTION_FW_POKE32, data)
+
+    def peekfw(self, addr):
+        return self.reg_action(addr, USRP2_REG_ACTION_FW_PEEK32)
+
+    def read_fpga_compat_number(self):
+        fpga_compat_num = self.peek32(U2_REG_COMPAT_NUM_RB)
+        fpga_major = fpga_compat_num >> 16
+        fpga_minor = fpga_compat_num & 0xffff
+        return (fpga_major, fpga_minor)
+
+    def read_fw_version(self):
+        minor, proto_ver = self.reg_action(U2_FW_REG_VER_MINOR, USRP2_REG_ACTION_FW_PEEK32, return_proto_version=True)
+        githash = self.peekfw(U2_FW_REG_GIT_HASH)
+        return (proto_ver, minor, githash)
 
 def create_umtrx_lms_device(lms_number, ip_address=None, bcast_addr="192.168.10.255"):
     ''' Fabric function to create UmTRX LMS device class '''
