@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #
 # Copyright 2012 Sylvain Munaut <tnt@246tNt.com>
+# Copyright 2012-2017 Alexander Chemeris <Alexander.Chemeris@fairwaves.co>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
