@@ -1,3 +1,12 @@
+umtrx-scripts (0.2) trusty; urgency=low
+
+  * umtrx_versin: A new utility to check UmTRX FPGA/fw versions.
+  * umtrx_vcxo: Output TCXO frequency, allow enable/disable GPSDO debug output.
+  * umtrx_lms: Add command line options to set TxVGA1 DC offset.
+  * Other minor cleanup.
+
+ -- Alexander Chemeris <Alexander.Chemeris@fairwaves.co>  Thu, 27 Jul 2017 23:56:32 +0300
+
 umtrx-scripts (0.1) trusty; urgency=low
 
   * Initial release
